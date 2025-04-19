@@ -6,18 +6,17 @@ import express, {
   Response,
 } from "express";
 import cors from "cors";
-import {connectDB} from './db';
+import { connectDB } from "./db";
 
 // import passport setup
-import './passport.config';
-
+import "./passport.config";
 
 // import routes
 import homeRoutes from "./routes/homeRoutes";
 import registrationRoute from "./routes/registrationRoutes";
-import authRoutes from './routes/auth';
+import authRoutes from "./routes/auth";
 import passport from "passport";
-import session from 'express-session'
+import session from "express-session";
 
 // Init the app
 const app = express();
@@ -28,21 +27,30 @@ connectDB();
 
 // loads built in middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true}));
 
-// middleware
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'default-secret',
+// session
+const sess = {
+  secret: process.env.SESSION_SECRET || "default-secret",
   resave: false,
   saveUninitialized: false,
-}));
+  cookie: { secure: false, sameSite: 'lax', httpOnly: true },
+};
+
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1); // trust first proxy
+  sess.cookie.secure = true; // serve secure cookies
+}
+
+// middleware
+app.use(session(sess));
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
 app.use("/backend-api", homeRoutes);
 app.use("/backend-api", registrationRoute);
-app.use('/backend-api', authRoutes);
+app.use("/backend-api", authRoutes);
 
 // Disable X-Powered-By - Security
 app.disable("x-powered-by");
