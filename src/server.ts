@@ -7,6 +7,8 @@ import express, {
 } from "express";
 import cors from "cors";
 import { connectDB } from "./db";
+import passport from "passport";
+import session from "express-session";
 
 // import passport setup
 import "./passport.config";
@@ -15,8 +17,8 @@ import "./passport.config";
 import homeRoutes from "./routes/homeRoutes";
 import registrationRoute from "./routes/registrationRoutes";
 import authRoutes from "./routes/auth";
-import passport from "passport";
-import session from "express-session";
+import adminRoutes from './routes/adminRoutes';
+
 
 // Init the app
 const app = express();
@@ -51,6 +53,7 @@ app.use(passport.session());
 app.use("/backend-api", homeRoutes);
 app.use("/backend-api", registrationRoute);
 app.use("/backend-api", authRoutes);
+app.use('/backend-api/admin', adminRoutes);
 
 // Disable X-Powered-By - Security
 app.disable("x-powered-by");

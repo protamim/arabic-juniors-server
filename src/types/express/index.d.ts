@@ -1,9 +1,9 @@
-import { UserDocument } from "../../models/users";
+import { AdminDocument } from "../../models/admin";
 
 declare global {
   namespace Express {
     interface Request {
-      user: UserDocument;
+      user: AdminDocument;
     }
   }
 }

@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
-import User from "../models/users";
+import Admin from "../models/admin";
 import bcrypt from "bcryptjs";
 import passport from "passport";
 
@@ -10,14 +10,14 @@ router.post("/signup", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const exists = await User.findOne({ email });
+    const exists = await Admin.findOne({ email });
     if (exists) {
       res.status(400).json({ message: "User already exists" });
       return; // making sure no further execution
     }
 
     const hash = await bcrypt.hash(password, 10);
-    const newUser = new User({ email: email, passwordHash: hash });
+    const newUser = new Admin({ email: email, passwordHash: hash });
     // save to the DB
     await newUser.save();
 
@@ -37,7 +37,7 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
 
     req.logIn(user, (err) => {
       if (err) return next(err);
-      return res.json({ message: "Logged in!", user });
+      return res.json({ message: "Logged in!" });
     });
   })(req, res, next);
 });
@@ -52,11 +52,12 @@ router.get("/logout", (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
+// admin users session route
 router.get("/auth/admin", (req: Request, res: Response) => {
   if (req.isAuthenticated()) {
     const user = { id: req.user._id, email: req.user?.email };
 
-    res.status(200).json({ user });
+    res.status(200).json(user);
     return;
   }
 

@@ -1,14 +1,14 @@
 import passport from "passport";
 import bcrypt from "bcryptjs";
 import { Strategy as LocalStrategy } from "passport-local";
-import User from "./models/users";
+import Admin from "./models/admin";
 
 passport.use(
   new LocalStrategy(
     { usernameField: "email" },
     async (email, password, done) => {
       try {
-        const user = await User.findOne({ email });
+        const user = await Admin.findOne({ email });
         if (!user) {
           return done(null, false, { message: "No User Found!" });
         }
@@ -32,7 +32,7 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
+    const user = await Admin.findById(id);
     done(null, user);
   } catch (error) {
     done(error);
