@@ -1,7 +1,7 @@
 import passport from "passport";
 import bcrypt from "bcryptjs";
 import { Strategy as LocalStrategy } from "passport-local";
-import Admin from "./models/admin";
+import Admin from "../models/admin";
 
 passport.use(
   new LocalStrategy(

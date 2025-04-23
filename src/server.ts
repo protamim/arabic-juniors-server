@@ -6,12 +6,12 @@ import express, {
   Response,
 } from "express";
 import cors from "cors";
-import { connectDB } from "./db";
+import { connectDB } from "./config/db";
 import passport from "passport";
 import session from "express-session";
 
 // import passport setup
-import "./passport.config";
+import "./config/passport.config";
 
 // import routes
 import homeRoutes from "./routes/homeRoutes";
