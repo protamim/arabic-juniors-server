@@ -10,6 +10,7 @@ import { connectDB } from "./config/db";
 import passport from "passport";
 import session from "express-session";
 
+
 // import passport setup
 import "./config/passport.config";
 
@@ -19,6 +20,7 @@ import registrationRoute from "./routes/registrationRoutes";
 import authRoutes from "./routes/auth";
 import adminRoutes from './routes/adminRoutes';
 import userRoutes from './routes/userRoutes';
+
 
 // Init the app
 const app = express();
@@ -50,7 +52,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use("/backend-api", homeRoutes);
+app.use("/", homeRoutes);
 app.use("/backend-api", registrationRoute);
 app.use("/backend-api", authRoutes);
 app.use('/backend-api/admin', adminRoutes);

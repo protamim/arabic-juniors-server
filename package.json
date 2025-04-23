@@ -2,9 +2,9 @@
   "name": "arabic-juniors-server",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/server.ts",
+  "main": "./api/index.ts",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only api/index.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "clean": "pnpm -r exec rm -rf node_modules && pnpm store prune"

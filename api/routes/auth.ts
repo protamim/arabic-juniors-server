@@ -55,9 +55,7 @@ router.get("/logout", (req: Request, res: Response, next: NextFunction) => {
 // admin users session route
 router.get("/auth/admin", (req: Request, res: Response) => {
   if (req.isAuthenticated()) {
-    const user = { id: req.user._id, email: req.user.email };
-
-    res.status(200).json(user);
+    res.status(200).json(req.user);
     return;
   }
 
