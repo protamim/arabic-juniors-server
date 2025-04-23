@@ -3,6 +3,7 @@ import mongoose, { Document } from "mongoose";
 export interface AdminDocument extends Document {
   email: string;
   passwordHash: string;
+  _id: string;
 }
 
 const adminSchema = new mongoose.Schema({

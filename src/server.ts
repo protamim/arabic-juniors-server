@@ -36,7 +36,7 @@ const sess = {
   secret: process.env.SESSION_SECRET || "default-secret",
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false, sameSite: 'lax', httpOnly: true },
+  cookie: { secure: false, httpOnly: true },
 };
 
 if (app.get("env") === "production") {
