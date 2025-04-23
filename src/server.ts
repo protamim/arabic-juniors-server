@@ -18,7 +18,7 @@ import homeRoutes from "./routes/homeRoutes";
 import registrationRoute from "./routes/registrationRoutes";
 import authRoutes from "./routes/auth";
 import adminRoutes from './routes/adminRoutes';
-
+import userRoutes from './routes/userRoutes';
 
 // Init the app
 const app = express();
@@ -54,6 +54,7 @@ app.use("/backend-api", homeRoutes);
 app.use("/backend-api", registrationRoute);
 app.use("/backend-api", authRoutes);
 app.use('/backend-api/admin', adminRoutes);
+app.use('/backend-api/', userRoutes);
 
 // Disable X-Powered-By - Security
 app.disable("x-powered-by");
