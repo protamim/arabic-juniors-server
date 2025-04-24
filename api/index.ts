@@ -40,13 +40,9 @@ connectDB()
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: isProduction,
+        secure: true,
         httpOnly: true,
-        sameSite: (isProduction ? "none" : "lax") as
-          | "none"
-          | "lax"
-          | "strict"
-          | boolean,
+        sameSite: "none" as "none" | "lax" | "strict" | boolean,
       },
       store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     };
