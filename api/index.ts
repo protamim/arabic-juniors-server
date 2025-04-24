@@ -39,11 +39,11 @@ connectDB()
       secret: process.env.SESSION_SECRET || "default-secret",
       resave: false,
       saveUninitialized: false,
-      cookie: {
-        secure: true,
-        httpOnly: true,
-        sameSite: "none" as "none" | "lax" | "strict" | boolean,
-      },
+      // cookie: {
+      //   secure: true,
+      //   httpOnly: true,
+      //   sameSite: "none" as "none" | "lax" | "strict" | boolean,
+      // },
       store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     };
 
