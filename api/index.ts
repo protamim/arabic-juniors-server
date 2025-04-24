@@ -9,6 +9,7 @@ import cors from "cors";
 import { connectDB } from "./config/db";
 import passport from "passport";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 
 
 // import passport setup
@@ -39,6 +40,7 @@ const sess = {
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false, httpOnly: true },
+  store: MongoStore.create({mongoUrl: process.env.MONGODB_URI})
 };
 
 if (app.get("env") === "production") {

@@ -16,6 +16,7 @@
     "axios": "^1.7.9",
     "bcryptjs": "^3.0.2",
     "btoa": "^1.2.1",
+    "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -37,6 +38,6 @@
     "@types/passport-local": "^1.0.38",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"
-  }, 
+  },
   "packageManager": "pnpm@10.8.0"
 }
