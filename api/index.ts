@@ -42,9 +42,12 @@ connectDB()
       cookie: {
         secure: isProduction,
         httpOnly: true,
-        sameSite: isProduction ? "none" : "lax",
+        sameSite: (isProduction ? "none" : "lax") as
+          | "none"
+          | "lax"
+          | "strict"
+          | boolean,
       },
-
       store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     };
 
