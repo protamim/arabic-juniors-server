@@ -13,19 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up SSH keys
+    - name: Set up SSH keys and add passphrase
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.DROPLET_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-
-    - name: Add SSH key passphrase
-      run: |
-        echo "$DROPLET_SSH_PASSPHRASE" | ssh-add ~/.ssh/id_rsa
-
-    - name: Setup known_hosts
-      run: |
-        ssh-keyscan -H ${{ secrets.DROPLET_HOST }} >> ~/.ssh/known_hosts
+       eval "$(ssh-agent -s)"           # start ssh-agent
+       mkdir -p ~/.ssh
+       echo "${{ secrets.DROPLET_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+       chmod 600 ~/.ssh/id_rsa
+       echo "${{ secrets.DROPLET_SSH_PASSPHRASE }}" | ssh-add ~/.ssh/id_rsa
 
     - name: Deploy to Droplet
       run: |
