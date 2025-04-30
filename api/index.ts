@@ -40,9 +40,9 @@ connectDB()
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: true,
-        httpOnly: true,
-        sameSite: "none" as "none" | "lax" | "strict" | boolean,
+        secure: isProduction,
+        httpOnly: isProduction,
+        sameSite: isProduction ? "none" : 'lax' as "none" | "lax" | "strict" | boolean,
       },
       store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     };
@@ -85,7 +85,7 @@ connectDB()
 
     // Start the server
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Server is running on PORT: ${PORT}`);
     });
   })
   .catch((err) => {
