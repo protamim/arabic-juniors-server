@@ -43,6 +43,7 @@ connectDB()
         secure: isProduction,
         httpOnly: isProduction,
         sameSite: isProduction ? "none" : 'lax' as "none" | "lax" | "strict" | boolean,
+        domain: `.${process.env.CLIENT_URL}`
       },
       store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     };
