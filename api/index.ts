@@ -27,6 +27,12 @@ const PORT = process.env.PORT || 5000;
 
 export const isProduction = process.env.NODE_ENV === "production";
 
+console.log(
+  process.env.CLIENT_URL
+    ? `.${new URL(process.env.CLIENT_URL).hostname}`
+    : undefined
+);
+
 // Database connection & start server only after success
 connectDB()
   .then(() => {
@@ -42,8 +48,12 @@ connectDB()
       cookie: {
         secure: isProduction,
         httpOnly: isProduction,
-        sameSite: isProduction ? "none" : 'lax' as "none" | "lax" | "strict" | boolean,
-        domain: `.${process.env.CLIENT_URL}`
+        sameSite: isProduction
+          ? "none"
+          : ("lax" as "none" | "lax" | "strict" | boolean),
+        domain: process.env.CLIENT_URL
+          ? `.${new URL(process.env.CLIENT_URL).hostname}`
+          : undefined,
       },
       store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     };
@@ -59,10 +69,10 @@ connectDB()
 
     // Routes
     app.use("/", homeRoutes);
-    app.use("/backend-api", registrationRoute);
-    app.use("/backend-api", authRoutes);
-    app.use("/backend-api/admin", adminRoutes);
-    app.use("/backend-api/", userRoutes);
+    app.use("/", registrationRoute);
+    app.use("/", authRoutes);
+    app.use("/admin", adminRoutes);
+    app.use("/", userRoutes);
 
     // Disable X-Powered-By for security
     app.disable("x-powered-by");
@@ -86,7 +96,7 @@ connectDB()
 
     // Start the server
     app.listen(PORT, () => {
-      console.log(`Server is running on PORT: ${PORT}`);
+      console.log(`Backend Server is running on PORT: ${PORT}`);
     });
   })
   .catch((err) => {
