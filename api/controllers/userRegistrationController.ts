@@ -1,7 +1,7 @@
 import { RequestHandler, type Request, type Response } from "express";
-import { sendWelcomeEmail } from "../services/emailService";
-import notifyAdmin from "../utils/notifyAdmin";
 import User from "../models/user";
+import { sendWelcomeEmail } from "../services/emailService";
+import { notifyAdmin } from "../utils/notifyAdmin";
 
 export const registerUser: RequestHandler = async (
   req: Request,
@@ -16,7 +16,7 @@ export const registerUser: RequestHandler = async (
     }
     // Call the service to send an email
     await sendWelcomeEmail(firstName, email);
-    await notifyAdmin(firstName, email);
+    await notifyAdmin({userEmail: email, userName: firstName});
 
     // save to db
     const users = new User({firstName: firstName, lastName: lastName, email: email});

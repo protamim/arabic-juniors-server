@@ -1,28 +1,43 @@
-import nodemailer from "nodemailer";
+import * as brevo from '@getbrevo/brevo';
+import { SendEmailParams } from '../types';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.gmail.com",
-  port: Number(process.env.EMAIL_PORT) || 587,
-  secure: false, // Use true for 465, false for other ports
-  auth: {
-    user: process.env.EMAIL_USER, // Sender email address
-    pass: process.env.EMAIL_APP_PASS, // Sender email password (app password) or app-specific password
-  },
-});
+const apiInstance = new brevo.TransactionalEmailsApi();
+apiInstance.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_V1_API_KEY as string
+);
 
-export const sendEmail = async (to: string, subject: string, html: string) => {
-  const mailOptions = {
-    from: `"Arabic Juniors" <${process.env.EMAIL_USER}>`,
-    to,
+export const sendEmail = async ({
+  toEmail,
+  toName,
+  subject,
+  htmlContent,
+}: SendEmailParams): Promise<brevo.CreateSmtpEmail> => {
+  const emailParams: brevo.SendSmtpEmail = {
+    sender: {
+      name: 'Arabic Juniors',
+      email: process.env.BREVO_VERIFIED_SENDER_EMAIL as string, // must be a verified sender
+    },
+    to: [
+      {
+        email: toEmail,
+        name: toName,
+      },
+    ],
     subject,
-    html,
+    htmlContent,
   };
 
   try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Email sent to ${to}`);
-  } catch (error) {
-    console.error("Error sending email:", error);
+    const response = await apiInstance.sendTransacEmail(emailParams);
+    console.log('Email sent:', response.body);
+    return response.body as brevo.CreateSmtpEmail;
+  } catch (error: unknown) {
+    if (error instanceof brevo.HttpError) {
+      console.error('Brevo API error:', error.response);
+    } else {
+      console.error('Unexpected error sending email:', error);
+    }
     throw error;
   }
 };
