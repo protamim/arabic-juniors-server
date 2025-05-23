@@ -10,6 +10,7 @@ export interface UserDocument {
   classStartDate: Date;
   classStartTime: string;
   howFindUs: string;
+  userIP: string;
 }
 
 const userSchema = new mongoose.Schema({
@@ -23,6 +24,7 @@ const userSchema = new mongoose.Schema({
   classStartDate: { type: Date, required: true },
   classStartTime: { type: String, required: true },
   howFindUs: { type: String, required: true },
+  userIP: {type: String, required: true}
 });
 
 const User = mongoose.model<UserDocument>("User", userSchema);

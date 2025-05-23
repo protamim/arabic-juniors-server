@@ -69,6 +69,7 @@ export const registerUser: RequestHandler = async (
       classStartDate,
       classStartTime,
       howFindUs,
+      userIP: userLocation?.ip
     };
 
     const users = new User(registrationData);
