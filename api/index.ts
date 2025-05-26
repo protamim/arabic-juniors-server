@@ -26,6 +26,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 export const isProduction = process.env.NODE_ENV === "production";
+console.log("Is prod =", isProduction);
 
 console.log(
   process.env.CLIENT_URL
@@ -38,7 +39,7 @@ connectDB()
   .then(() => {
     // Middleware setup
     app.use(express.json());
-    app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+    app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 
     // Session setup
     const sess = {
