@@ -75,13 +75,6 @@ export const registerUser: RequestHandler = async (
     const users = new User(registrationData);
     await users.save();
 
-    console.log(
-      "registration info: ",
-      registrationData,
-      "ip",
-      userLocation?.ip
-    );
-
     res.status(200).json({ message: "Registration successful. Email sent!" });
   } catch (error: any) {
     if (error.code === 11000 && error.keyPattern?.email) {

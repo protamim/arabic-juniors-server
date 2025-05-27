@@ -1,9 +1,9 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 
 export interface AdminDocument extends Document {
   email: string;
   passwordHash: string;
-  _id: string;
+  _id: Types.ObjectId;
 }
 
 const adminSchema = new mongoose.Schema({
