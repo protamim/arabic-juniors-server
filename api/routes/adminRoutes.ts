@@ -1,16 +1,24 @@
-import express, { Request, Response } from "express";
-import Admin from "../models/admin";
+import express from "express";
+import { authenticateAdmin } from "../middleware/authMiddleware";
+import {
+  adminLogin,
+  adminProfile,
+  adminSignup,
+  adminUsers,
+} from "../controllers/adminControllers";
 
 const router = express.Router();
 
-// Get all the admin users ---- GET
-router.get("/users", async (req: Request, res: Response) => {
-  try {
-    const adminUsers = await Admin.find().select('email');
-    res.status(200).json(adminUsers);
-  } catch (error) {
-    console.log("Admin users error:", error);
-  }
-});
+// ALL ADMIN ---- GET
+router.get("/users", authenticateAdmin, adminUsers);
+
+// ADMIN PROFILE
+router.get("/profile", authenticateAdmin, adminProfile);
+
+// ADMIN SIGNUP ---- POST
+router.post("/signup", adminSignup);
+
+// ADMIN LOGIN --- POST
+router.post("/login", adminLogin);
 
 export default router;
