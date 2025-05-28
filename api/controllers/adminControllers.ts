@@ -87,26 +87,3 @@ interface AdminProfileRequest extends Request {
 export const adminProfile = async (req: AdminProfileRequest, res: Response) => {
   res.status(200).json({ adminId: req.adminId, success: true });
 };
-
-
-// ADMIN LOGOUT
-export const adminLogout = (req: Request, res: Response) => {
-  try {
-    const clientHostname = new URL(process.env.CLIENT_URL as string).hostname;
-    const baseDomain = clientHostname.startsWith("www.")
-      ? clientHostname.substring(4)
-      : clientHostname;
-
-    res.clearCookie("jwtToken", {
-      domain: `.${baseDomain}`,     // match domain
-      httpOnly: isProduction ? true : false,
-      secure: isProduction ? true : false,
-      sameSite: isProduction ? "none" : "lax",
-    });
-
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (err) {
-    console.error("Logout failed:", err);
-    res.status(500).json({ message: "Logout error" });
-  }
-};
