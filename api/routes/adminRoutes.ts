@@ -2,6 +2,7 @@ import express from "express";
 import { authenticateAdmin } from "../middleware/authMiddleware";
 import {
   adminLogin,
+  adminLogout,
   adminProfile,
   adminSignup,
   adminUsers,
@@ -14,6 +15,9 @@ router.get("/users", authenticateAdmin, adminUsers);
 
 // ADMIN PROFILE
 router.get("/profile", authenticateAdmin, adminProfile);
+
+// ADMIN LOGOUT --- GET
+router.get('/logout', adminLogout);
 
 // ADMIN SIGNUP ---- POST
 router.post("/signup", adminSignup);
