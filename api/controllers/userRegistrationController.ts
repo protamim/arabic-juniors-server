@@ -1,8 +1,8 @@
 import { RequestHandler, type Request, type Response } from "express";
 import User from "../models/user";
-import { sendWelcomeEmail } from "../services/emailService";
 import { notifyAdmin } from "../utils/notifyAdmin";
 import { getUserLocation } from "../utils/getUserLocation";
+import { sendTrialSessionEmail } from "../services/emailService";
 
 // interface RegistrationDataTypes {
 //   firstName: string;
@@ -54,8 +54,24 @@ export const registerUser: RequestHandler = async (
     }
 
     // Call the service to send an email
-    await sendWelcomeEmail(firstName, email);
-    await notifyAdmin({ userEmail: email, userName: firstName });
+    await sendTrialSessionEmail(
+      firstName,
+      email,
+      classStartDate,
+      classStartTime
+    );
+
+    await notifyAdmin({
+      classStartDate,
+      classStartTime,
+      email,
+      firstName,
+      grade,
+      howFindUs,
+      howManyJoin,
+      phoneNumber,
+      preferredTeacher,
+    });
 
     // save to db
     const registrationData = {
@@ -69,7 +85,7 @@ export const registerUser: RequestHandler = async (
       classStartDate,
       classStartTime,
       howFindUs,
-      userIP: userLocation?.ip
+      userIP: userLocation?.ip,
     };
 
     const users = new User(registrationData);

@@ -47,13 +47,27 @@ apiInstance.setApiKey(
 );
 
 interface NotifyAdminParams {
-  userEmail: string;
-  userName: string;
+  firstName: string;
+  email: string;
+  phoneNumber: string;
+  grade: number;
+  howManyJoin: string;
+  preferredTeacher: string;
+  classStartDate: Date;
+  classStartTime: string;
+  howFindUs: string;
 }
 
 export const notifyAdmin = async ({
-  userEmail,
-  userName,
+  classStartDate,
+  classStartTime,
+  email,
+  firstName,
+  grade,
+  howFindUs,
+  howManyJoin,
+  phoneNumber,
+  preferredTeacher,
 }: NotifyAdminParams): Promise<brevo.CreateSmtpEmail> => {
   const emailParams: brevo.SendSmtpEmail = {
     sender: {
@@ -62,15 +76,26 @@ export const notifyAdmin = async ({
     },
     to: [
       {
-        email: process.env.BREVO_VERIFIED_SENDER_EMAIL as string,
+        email: "imran.gauri@gmail.com",
+        name: "Admin",
+      },
+      {
+        email: "rafat@arabicjuniors.com",
         name: "Admin",
       },
     ],
-    subject: "New User Registration",
-    htmlContent: `<p>A new user has registered:</p>
+    subject: "Arabic Juniors | Trial Request",
+    htmlContent: `<p>A new Trial Request has registered:</p>
      <ul>
-       <li>Name: ${userName}</li>
-      <li>Email: ${userEmail}</li>
+      <li>Name: ${firstName}</li>
+      <li>Email: ${email}</li> 
+      <li>Class Start Date: ${classStartDate}</li>
+      <li>Class Start Time: ${classStartTime}</li>
+      <li>Grade: ${grade}</li>
+      <li>How Find Us: ${howFindUs}</li>
+      <li>How Many Join: ${howManyJoin}</li>
+      <li>Phone Number: ${phoneNumber}</li>
+      <li>Preferred Teacher: ${preferredTeacher}</li>
      </ul>`,
   };
 
