@@ -1,7 +1,7 @@
 import { RequestHandler, type Request, type Response } from "express";
 import User from "../models/user";
 import { notifyAdmin } from "../utils/notifyAdmin";
-import { getUserLocation } from "../utils/getUserLocation";
+import { getClientLocation } from "../utils/getClientLocation";
 import { sendTrialSessionEmail } from "../services/emailService";
 
 // interface RegistrationDataTypes {
@@ -22,7 +22,7 @@ export const registerUser: RequestHandler = async (
   res: Response
 ) => {
   try {
-    const userLocation = await getUserLocation();
+    const userLocation = await getClientLocation(req);
 
     const {
       firstName,
@@ -85,7 +85,7 @@ export const registerUser: RequestHandler = async (
       classStartDate,
       classStartTime,
       howFindUs,
-      userIP: userLocation?.ip,
+      userIP: userLocation?.city,
     };
 
     const users = new User(registrationData);
