@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinary";
 import TeacherRegistration from "../models/teacherRegistration";
+import { sendTeacherRegistrationReplyEmail } from "../services/emailService";
+import { TeacherRegistrationTypes } from "../types";
 
 const uploadToCloudinary = async (file: Express.Multer.File) => {
   const b64 = Buffer.from(file.buffer).toString("base64");
@@ -13,8 +15,9 @@ const uploadToCloudinary = async (file: Express.Multer.File) => {
 };
 
 export const teacherRegistration = async (req: Request, res: Response) => {
+  const uploadedAssets: string[] = [];
   try {
-    const body = req.body;
+    const body: TeacherRegistrationTypes = req.body;
     const files = req.files as {
       [fieldname: string]: Express.Multer.File[];
     };
@@ -45,6 +48,9 @@ export const teacherRegistration = async (req: Request, res: Response) => {
     const teachers = new TeacherRegistration(teacherData);
     await teachers.save();
 
+    // call the services
+    await sendTeacherRegistrationReplyEmail(body.email, body.first_name);
+
     res.status(200).json({ message: "Registration successful" });
   } catch (error) {
     console.error("teacher registration error:", error);
@@ -52,5 +58,14 @@ export const teacherRegistration = async (req: Request, res: Response) => {
       message: "Teacher registration failed",
       error: error instanceof Error ? error.message : error,
     });
+
+    // Something went wrong: Rollback Cloudinary uploads
+    await Promise.all(
+      uploadedAssets.map((public_id) =>
+        cloudinary.uploader.destroy(public_id, {
+          resource_type: "auto",
+        })
+      )
+    );
   }
 };

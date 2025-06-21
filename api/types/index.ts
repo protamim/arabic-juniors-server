@@ -31,7 +31,7 @@ export interface TeacherRegistrationTypes {
   occupation: string;
   introduce_yourself: string;
   fb_id: string;
-  personal_image: File;
+  // personal_image: File;
   education: string;
   teaching_experience: string;
   mother_lang: (typeof langValues)[number];
@@ -41,8 +41,8 @@ export interface TeacherRegistrationTypes {
   // doc_3: FileList;
   // doc_4: FileList;
   preferred_interview_time: "morning" | "afternoon" | "evening";
-  expected_salary: number;
-  work_hours: number;
+  expected_salary: string; // transform to number
+  work_hours: string; // transform to number 
   employment_desire: "full-time" | "part-time" | "full-part";
   what_make_ideal: string;
   how_find_us:
@@ -52,5 +52,5 @@ export interface TeacherRegistrationTypes {
     | "al-furqan"
     | "advertisement"
     | "other";
-  declaration: boolean;
+  declaration: string; // transform to boolean
 }
