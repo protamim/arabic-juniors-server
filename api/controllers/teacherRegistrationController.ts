@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinary";
+import TeacherRegistration from "../models/teacherRegistration";
 
 const uploadToCloudinary = async (file: Express.Multer.File) => {
   const b64 = Buffer.from(file.buffer).toString("base64");
   const dataUri = `data:${file.mimetype};base64,${b64}`;
   const result = await cloudinary.uploader.upload(dataUri, {
     folder: "teachers-registration",
-    resource_type: 'auto'
+    resource_type: "auto",
   });
   return result.secure_url;
 };
@@ -35,19 +36,16 @@ export const teacherRegistration = async (req: Request, res: Response) => {
       expected_salary: parseFloat(body.expected_salary),
       work_hours: parseFloat(body.work_hours),
       declaration: body.declaration === "true",
-      other_langs: body["other_langs[]"]
-        ? Array.isArray(body["other_langs[]"])
-          ? body["other_langs[]"]
-          : [body["other_langs[]"]]
-        : [],
       ...uploadedFiles,
     };
 
-    console.log("Final teacher data:", teacherData);
+    // console.log("Final teacher data:", teacherData);
 
-    // TODO: Save teacherData to MongoDB (if needed)
+    // Save teacherData to MongoDB
+    const teachers = new TeacherRegistration(teacherData);
+    await teachers.save();
 
-    res.status(200).json({ message: "Registration successful", teacherData });
+    res.status(200).json({ message: "Registration successful" });
   } catch (error) {
     console.error("teacher registration error:", error);
     res.status(500).json({
