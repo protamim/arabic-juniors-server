@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { sendEmail } from "../utils/email";
 
 export const sendWelcomeEmail = async (firstName: string, email: string) => {
@@ -45,9 +46,7 @@ export const sendTrialSessionEmail = async (
 
         <p>Thank you for requesting a <strong>trial session</strong> with us on:</p>
         <p style="padding:12px 16px; background-color:#fff9e6; border-left:5px solid #f4c430; font-weight:bold; font-size:16px; margin:10px 0;">
-          📅 ${new Date(
-            classStartDate
-          ).toLocaleDateString()} at ${classStartTime}
+          📅 ${format(classStartDate, 'DD MMMM')} at ${classStartTime}
         </p>
 
         <!-- Highlighted Section -->
