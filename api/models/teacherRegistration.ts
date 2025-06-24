@@ -1,4 +1,4 @@
-import { Schema, model, models, Document } from "mongoose";
+import mongoose from "mongoose";
 
 const langValues = [
   "eng",
@@ -14,7 +14,7 @@ const langValues = [
 
 export type LangType = (typeof langValues)[number];
 
-export interface TeacherRegistrationDocument extends Document {
+export interface TeacherRegistrationDocument extends mongoose.Document {
   first_name: string;
   last_name: string;
   gender: "Male" | "Female" | "Custom";
@@ -54,7 +54,7 @@ export interface TeacherRegistrationDocument extends Document {
   updatedAt?: Date;
 }
 
-const TeacherRegistrationSchema = new Schema<TeacherRegistrationDocument>(
+const TeacherRegistrationSchema = new mongoose.Schema<TeacherRegistrationDocument>(
   {
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
@@ -102,6 +102,6 @@ const TeacherRegistrationSchema = new Schema<TeacherRegistrationDocument>(
 );
 
 
-const TeacherRegistration = model("TeacherRegistration", TeacherRegistrationSchema);
+const TeacherRegistration = mongoose.model("TeacherRegistration", TeacherRegistrationSchema);
 
 export default TeacherRegistration;

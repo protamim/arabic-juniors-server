@@ -7,6 +7,7 @@ const upload = multer({ storage });
 
 import { registerUser } from "../controllers/userRegistrationController";
 import { teacherRegistration } from "../controllers/teacherRegistrationController";
+import studentRegistration from "../controllers/studentRegistrationController";
 
 router.post("/register", registerUser);
 
@@ -19,5 +20,7 @@ const uploadMiddleware = upload.fields([
 ]);
 
 router.post("/teacher-registration", uploadMiddleware, teacherRegistration);
+
+router.post("/student-registration", studentRegistration);
 
 export default router;

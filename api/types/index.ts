@@ -54,3 +54,18 @@ export interface TeacherRegistrationTypes {
     | "other";
   declaration: string; // transform to boolean
 }
+
+
+export type StudentRegistrationFormTypes = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  class_grade: number;
+  school_name: string;
+  class_type: "individual" | "group";
+  pricing_package: string;
+  class_start_date: Date;
+  preferred_time: string;
+  preferred_days: string[];
+};
