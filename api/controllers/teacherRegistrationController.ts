@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import cloudinary from "../config/cloudinary";
 import TeacherRegistration from "../models/teacherRegistration";
-import { sendTeacherRegistrationReplyEmail } from "../services/emailService";
+import { sendTeacherRegistrationReplyEmail, sendTeacherRegToAdmin } from "../services/emailService";
 import { TeacherRegistrationTypes } from "../types";
 
 const uploadToCloudinary = async (file: Express.Multer.File) => {
@@ -11,7 +11,8 @@ const uploadToCloudinary = async (file: Express.Multer.File) => {
     folder: "teachers-registration",
     resource_type: "auto",
   });
-  return result.secure_url;
+ 
+  return {...result};
 };
 
 export const teacherRegistration = async (req: Request, res: Response) => {
@@ -28,8 +29,9 @@ export const teacherRegistration = async (req: Request, res: Response) => {
 
     for (const field of uploadFields) {
       if (files?.[field]?.[0]) {
-        const url = await uploadToCloudinary(files[field][0]);
-        uploadedFiles[field] = url;
+        const {secure_url, public_id} = await uploadToCloudinary(files[field][0]);
+        uploadedFiles[field] = secure_url;
+        uploadedAssets.push(public_id);
       }
     }
 
@@ -42,14 +44,15 @@ export const teacherRegistration = async (req: Request, res: Response) => {
       ...uploadedFiles,
     };
 
-    // console.log("Final teacher data:", teacherData);
-
     // Save teacherData to MongoDB
     const teachers = new TeacherRegistration(teacherData);
     await teachers.save();
 
-    // call the services
-    await sendTeacherRegistrationReplyEmail(body.email, body.first_name);
+    // send reply email after register a teacher
+    await sendTeacherRegistrationReplyEmail({ ...body });
+
+    // send a email to admin after register a teacher
+    await sendTeacherRegToAdmin({...body});
 
     res.status(200).json({ message: "Registration successful" });
   } catch (error) {

@@ -1,5 +1,11 @@
 import { format } from "date-fns";
 import { sendEmail } from "../utils/email";
+import { sendEmailToAdmin } from "../utils/sendEmailToAdmin";
+import {
+  StudentRegistrationFormTypes,
+  TeacherRegistrationTypes,
+  TrialRegFormTypes,
+} from "../types";
 
 export const sendWelcomeEmail = async (firstName: string, email: string) => {
   const subject = "Welcome to Our Arabic Juniors App!";
@@ -14,12 +20,12 @@ export const sendWelcomeEmail = async (firstName: string, email: string) => {
   });
 };
 
-export const sendTrialSessionEmail = async (
-  firstName: string,
-  email: string,
-  classStartDate: Date,
-  classStartTime: string
-) => {
+export const sendTrialSessionEmailToUser = async ({
+  classStartDate,
+  classStartTime,
+  email,
+  firstName,
+}: TrialRegFormTypes) => {
   const subject = "Arabic Juniors | Trial Request";
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -108,10 +114,10 @@ export const sendTrialSessionEmail = async (
   });
 };
 
-export const sendTeacherRegistrationReplyEmail = async (
-  email: string,
-  first_name: string
-) => {
+export const sendTeacherRegistrationReplyEmail = async ({
+  email,
+  first_name,
+}: TeacherRegistrationTypes) => {
   const subject = "Thanks for applying to Arabic Juniors";
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -197,7 +203,7 @@ export const sendTeacherRegistrationReplyEmail = async (
   });
 };
 
-interface SendStudentRegConfirmationEmailTypes {
+interface StudentRegConfEmailParams {
   email: string;
   firstName: string;
   lastName: string;
@@ -216,7 +222,7 @@ export const sendStudentRegConfirmationEmail = async ({
   preferredDays,
   selectedPackage,
   monthlyHours,
-}: SendStudentRegConfirmationEmailTypes) => {
+}: StudentRegConfEmailParams) => {
   const subject = "Welcome to Arabic Juniors";
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -288,7 +294,10 @@ export const sendStudentRegConfirmationEmail = async ({
                 <p>🗓️ <strong>Monthly Hours:</strong> ${monthlyHours}</p>
                 <p>📅 <strong>Preferred Days:</strong> 
                 ${preferredDays?.join(", ")}</p>
-                <p>⏰ <strong>Class Start Date and Time:</strong> ${format(classStartDate, "dd MMMM")} at ${classStartTime}</p>
+                <p>⏰ <strong>Class Start Date and Time:</strong> ${format(
+                  classStartDate,
+                  "dd MMMM"
+                )} at ${classStartTime}</p>
               </div>
               <p style="margin-top:25px;">We look forward to seeing your progress and celebrating your achievements along the way.</p>
               <p><strong>Your assigned teacher will contact you shortly to begin your classes.</strong></p>
@@ -349,5 +358,139 @@ export const sendStudentRegConfirmationEmail = async ({
     toName: firstName,
     htmlContent: html,
     subject: subject,
+  });
+};
+
+export const sendStudentRegNotifToAdmin = async ({
+  class_grade,
+  class_start_date,
+  class_type,
+  email,
+  first_name,
+  last_name,
+  phone_number,
+  preferred_days,
+  preferred_time,
+  pricing_package,
+  school_name,
+}: StudentRegistrationFormTypes) => {
+  const subject = `📚 Student Registration: ${first_name} ${last_name}`;
+
+  const formattedDate = format(class_start_date, "dd MMMM");
+
+  const emailTemplate = `
+    <h2>📝 New Student Registration - Arabic Juniors</h2>
+    <p>A new student has been registered. Details are as follows:</p>
+    <ul>
+      <li><strong>Full Name:</strong> ${first_name} ${last_name}</li>
+      <li><strong>Email:</strong> ${email}</li>
+      <li><strong>Phone Number:</strong> ${phone_number}</li>
+      <li><strong>Class Grade:</strong> ${class_grade}</li>
+      <li><strong>School Name:</strong> ${school_name}</li>
+      <li><strong>Class Type:</strong> ${class_type}</li>
+      <li><strong>Selected Pricing Package:</strong> ${pricing_package}</li>
+      <li><strong>Class Start Date:</strong> ${formattedDate}</li>
+      <li><strong>Preferred Time:</strong> ${preferred_time}</li>
+      <li><strong>Preferred Days:</strong> ${
+        preferred_days?.join(", ") || "Not specified"
+      }</li>
+    </ul>
+  `;
+
+  return await sendEmailToAdmin({
+    subject,
+    htmlContent: emailTemplate,
+  });
+};
+
+export const sendTrialEmailToAdmin = async ({
+  classStartDate,
+  classStartTime,
+  email,
+  firstName,
+  grade,
+  howFindUs,
+  howManyJoin,
+  phoneNumber,
+  preferredTeacher,
+}: TrialRegFormTypes) => {
+  const subject = "Arabic Juniors | Trial Request";
+  const htmlContent = `<p>A new Trial Request has registered:</p>
+     <ul>
+      <li>Name: ${firstName}</li>
+      <li>Email: ${email}</li> 
+      <li>Class Start Date: ${classStartDate}</li>
+      <li>Class Start Time: ${classStartTime}</li>
+      <li>Grade: ${grade}</li>
+      <li>How Find Us: ${howFindUs}</li>
+      <li>How Many Join: ${howManyJoin}</li>
+      <li>Phone Number: ${phoneNumber}</li>
+      <li>Preferred Teacher: ${preferredTeacher}</li>
+     </ul>`;
+
+  return await sendEmailToAdmin({ subject: subject, htmlContent: htmlContent });
+};
+
+export const sendTeacherRegToAdmin = async ({
+  address,
+  birth,
+  declaration,
+  education,
+  email,
+  employment_desire,
+  expected_salary,
+  fb_id,
+  first_name,
+  gender,
+  how_find_us,
+  introduce_yourself,
+  last_name,
+  materials_status,
+  mother_lang,
+  nationality,
+  occupation,
+  preferred_interview_time,
+  teaching_experience,
+  what_make_ideal,
+  where_live,
+  work_hours,
+  other_langs,
+  whatsapp_number,
+}: TeacherRegistrationTypes) => {
+  const subject = `New Teacher Registration: ${first_name} ${last_name}`;
+
+  const emailTemplate = `
+    <h2>📥 New Teacher Registration from Arabic Juniors</h2>
+    <p>A new teacher has registered. Here are the details:</p>
+    <ul>
+      <li><strong>Full Name:</strong> ${first_name} ${last_name}</li>
+      <li><strong>Email:</strong> ${email}</li>
+      <li><strong>WhatsApp Number:</strong> ${whatsapp_number}</li>
+      <li><strong>Facebook ID:</strong> ${fb_id}</li>
+      <li><strong>Date of Birth:</strong> ${birth}</li>
+      <li><strong>Gender:</strong> ${gender}</li>
+      <li><strong>Address:</strong> ${address}</li>
+      <li><strong>Where Do You Live:</strong> ${where_live}</li>
+      <li><strong>Nationality:</strong> ${nationality}</li>
+      <li><strong>Mother Language:</strong> ${mother_lang}</li>
+      <li><strong>Other Languages:</strong> ${other_langs?.join(", ")}</li>
+      <li><strong>Current Occupation:</strong> ${occupation}</li>
+      <li><strong>Education:</strong> ${education}</li>
+      <li><strong>Teaching Experience:</strong> ${teaching_experience}</li>
+      <li><strong>Materials Status:</strong> ${materials_status}</li>
+      <li><strong>Employment Desire:</strong> ${employment_desire}</li>
+      <li><strong>Expected Salary:</strong> ${expected_salary}</li>
+      <li><strong>Preferred Interview Time:</strong> ${preferred_interview_time}</li>
+      <li><strong>Available Work Hours:</strong> ${work_hours}</li>
+      <li><strong>How Did You Find Us:</strong> ${how_find_us}</li>
+      <li><strong>Why Are You an Ideal Candidate:</strong> ${what_make_ideal}</li>
+      <li><strong>Introduction:</strong> ${introduce_yourself}</li>
+      <li><strong>Declaration:</strong> ${declaration}</li>
+    </ul>
+  `;
+
+  return await sendEmailToAdmin({
+    subject,
+    htmlContent: emailTemplate,
   });
 };

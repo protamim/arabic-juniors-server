@@ -1,21 +1,11 @@
 import { RequestHandler, type Request, type Response } from "express";
 import User from "../models/user";
-import { notifyAdmin } from "../utils/notifyAdmin";
 import { getClientLocation } from "../utils/getClientLocation";
-import { sendTrialSessionEmail } from "../services/emailService";
-
-// interface RegistrationDataTypes {
-//   firstName: string;
-//   lastName: string;
-//   email: string;
-//   phoneNumber: string;
-//   grade: number;
-//   howManyJoin: string;
-//   preferredTeacher: string;
-//   classStartDate: Date;
-//   classStartTime: string;
-//   howFindUs: string;
-// }
+import {
+  sendTrialEmailToAdmin,
+  sendTrialSessionEmailToUser,
+} from "../services/emailService";
+import { TrialRegFormTypes } from "../types";
 
 export const registerUser: RequestHandler = async (
   req: Request,
@@ -24,72 +14,23 @@ export const registerUser: RequestHandler = async (
   try {
     const userLocation = await getClientLocation(req);
 
-    const {
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      grade,
-      howManyJoin,
-      preferredTeacher,
-      classStartDate,
-      classStartTime,
-      howFindUs,
-    } = req.body;
+    const body: TrialRegFormTypes = req.body;
 
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phoneNumber ||
-      !grade ||
-      !howManyJoin ||
-      !preferredTeacher ||
-      !classStartDate ||
-      !classStartTime ||
-      !howFindUs
-    ) {
+    if (!body) {
       res.status(400).json({ message: "All fields are required!" });
       return; // Ensure no further execution
     }
 
-    // Call the service to send an email
-    await sendTrialSessionEmail(
-      firstName,
-      email,
-      classStartDate,
-      classStartTime
-    );
-
-    await notifyAdmin({
-      classStartDate,
-      classStartTime,
-      email,
-      firstName,
-      grade,
-      howFindUs,
-      howManyJoin,
-      phoneNumber,
-      preferredTeacher,
-    });
-
     // save to db
-    const registrationData = {
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      grade,
-      howManyJoin,
-      preferredTeacher,
-      classStartDate,
-      classStartTime,
-      howFindUs,
-      userIP: userLocation?.city,
-    };
-
+    const registrationData = { ...body, userIP: userLocation?.city };
     const users = new User(registrationData);
     await users.save();
+
+    // send email to user after register
+    await sendTrialSessionEmailToUser({ ...body });
+
+    // send email to admin after register a user for trial
+    await sendTrialEmailToAdmin({ ...body });
 
     res.status(200).json({ message: "Registration successful. Email sent!" });
   } catch (error: any) {

@@ -1,7 +1,10 @@
 import type { Request, Response } from "express";
 import { StudentRegistrationFormTypes } from "../types";
 import StudentRegistration from "../models/studentRegistration";
-import { sendStudentRegConfirmationEmail } from "../services/emailService";
+import {
+  sendStudentRegConfirmationEmail,
+  sendStudentRegNotifToAdmin,
+} from "../services/emailService";
 
 const studentRegistration = async (req: Request, res: Response) => {
   const body: StudentRegistrationFormTypes = req.body;
@@ -42,8 +45,8 @@ const studentRegistration = async (req: Request, res: Response) => {
     const students = new StudentRegistration(body);
     await students.save();
 
-    // send email
-    sendStudentRegConfirmationEmail({
+    // send confirmation email after register
+    await sendStudentRegConfirmationEmail({
       email: email,
       classStartDate: class_start_date,
       classStartTime: preferred_time,
@@ -53,6 +56,9 @@ const studentRegistration = async (req: Request, res: Response) => {
       preferredDays: preferred_days,
       selectedPackage: pricing_package,
     });
+
+    // send notification email to admin after register a student
+    await sendStudentRegNotifToAdmin({ ...body });
 
     res
       .status(200)

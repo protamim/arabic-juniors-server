@@ -69,3 +69,17 @@ export type StudentRegistrationFormTypes = {
   preferred_time: string;
   preferred_days: string[];
 };
+
+
+export interface TrialRegFormTypes {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  grade: number;
+  howManyJoin: string;
+  preferredTeacher: string;
+  classStartDate: Date;
+  classStartTime: string;
+  howFindUs: string;
+}
