@@ -1,9 +1,26 @@
 import express from "express";
-import { registerUser } from "../controllers/userRegistrationController";
-
 const router = express.Router();
+
+import multer from "multer";
+const storage = multer.memoryStorage(); // Store file in memory
+const upload = multer({ storage });
+
+import { registerUser } from "../controllers/userRegistrationController";
+import { teacherRegistration } from "../controllers/teacherRegistrationController";
+import studentRegistration from "../controllers/studentRegistrationController";
 
 router.post("/register", registerUser);
 
-export default router;
+const uploadMiddleware = upload.fields([
+  { name: "doc_1", maxCount: 1 },
+  { name: "doc_2", maxCount: 1 },
+  { name: "doc_3", maxCount: 1 },
+  { name: "doc_4", maxCount: 1 },
+  { name: "personal_image", maxCount: 1 },
+]);
 
+router.post("/teacher-registration", uploadMiddleware, teacherRegistration);
+
+router.post("/student-registration", studentRegistration);
+
+export default router;
